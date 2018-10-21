@@ -1,47 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Explore vue</title>
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" defer></script>
-	<script type="module" src="app.js" defer></script>
+  <title>Explore vue!</title>
+  <meta charset="utf-8">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js" defer></script>
+  <script type="text/javascript" defer src="app.js"></script>
+  <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-	<div id="app">
-		{{ message }}
-	</div>
-	<div id="app2">
-		<span v-bind:title='message'>
-			Hover on me for a few seconds to see dynamically
-			bound title
-		</span>
-	</div>
-	<div id="app3">
-		<span v-if='seen'>Now you see me</span>
-	</div>
-	<dir id="app4">
-		<ol>
-			<li v-for='todo in todos'>
-				{{ todo.text }}
-			</li>
-		</ol>
-	</dir>
-	<div id="app5">
-		{{ message }}
-		<button v-on:click='reverseMessage'>Reverse message</button>
-	</div>
-	<div id="app6">
-		<p>{{ message }}</p>
-		<input v-model="message">
-	</div>
-	<div id="app7">
-		<ol>
-			<todo-item
-				v-for='item in groceryList'
-				v-bind:todo='item'
-				v-bind:key='item.id'
-			>
-			</todo-item>
-		</ol>
-	</div>
+  <div id="users">
+    <button @click='toggleUsers' v-cloak>{{ showUsersText }}</button>
+    <p v-if='shouldShowUsers' v-text='usersLength' v-cloak></p>
+    <table v-if="shouldShowUsers">
+      <tr>
+        <th>Lastname</th>
+        <th>Firstname</th>
+        <th>Patronym</th>
+        <th>Profile photo</th>
+      </tr>
+      <tr v-for='user in users' :key='user.id'>
+        <td v-text='user.lastname'></td>
+        <td v-text='user.name'></td>
+        <td v-text='user.patronym'></td>
+        <td v-text='user.photo'></td>
+      </tr>
+    </table>
+  </div>
 </body>
 </html>
