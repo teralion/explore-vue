@@ -1,3 +1,7 @@
+import Vue from 'vue'
+import { VTooltip } from 'v-tooltip'
+import Copy from 'v-copy'
+
 let users = new Vue({
   el: '#users',
   data: function() {
