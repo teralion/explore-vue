@@ -8,8 +8,8 @@
 </head>
 <body>
   <div id="users">
-    <button v-on:click='toggleUsers' v-cloak>{{ showUsersText }}</button>
-    <p v-if='shouldShowUsers' v-cloak>{{ usersLength }}</p>
+    <button type="button" v-on:click="toggleUsers" v-cloak>{{ showUsersText }}</button>
+    <p v-if="shouldShowUsers" v-cloak>{{ usersLength }}</p>
     <table v-if="shouldShowUsers">
       <tr>
         <th>Lastname</th>
@@ -17,7 +17,7 @@
         <th>Patronym</th>
         <th>Profile photo</th>
       </tr>
-      <tr v-for='user in users' v-bind:key='user.id'>
+      <tr v-for="user in users" v-bind:key="user.id">
         <td>{{ user.lastname }}</td>
         <td>{{ user.name }}</td>
         <td>{{ user.patronym }}</td>
