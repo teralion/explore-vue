@@ -3,7 +3,7 @@ import { VTooltip } from 'v-tooltip'
 import Copy from 'v-copy'
 import _ from 'lodash'
 
-Vue.component('title-component', {
+let titleComponent = {
   props: ['title'],
   template: `
     <div>
@@ -18,10 +18,13 @@ Vue.component('title-component', {
       </button>
     </div>
   `,
-})
+}
 
 let users = new Vue({
   el: '#users',
+  components: {
+    'title-component': titleComponent,
+  },
   data: function() {
     return {
       shiftsCounter: 1,
