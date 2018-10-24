@@ -1,6 +1,16 @@
 import Vue from 'vue'
 import { VTooltip } from 'v-tooltip'
 import Copy from 'v-copy'
+import _ from 'lodash'
+
+Vue.component('title-component', {
+  props: ['title'],
+  template: `
+    <div>
+      {{ title }}
+    </div>
+  `,
+})
 
 let users = new Vue({
   el: '#users',
@@ -14,8 +24,11 @@ let users = new Vue({
         { name: 'Lavr', lastname: 'Kornilov', patronym: 'Georgiyevich', photo: '', id: 3 },
         { name: 'Alexander', lastname: 'Kolchak', patronym: 'Vasilyevich', photo: '', id: 4 },
         { name: 'Alexander', lastname: 'Fitzhelaurov', patronym: 'Petrovich', photo: '', id: 5 },
-      ];
+      ],
     }
+  },
+  created: function() {
+    this.getDebouncedAnswer = _.debounce(this.getAnswer, 500);
   },
   computed: {
     usersLength: function() {
@@ -25,6 +38,9 @@ let users = new Vue({
     },
   },
   methods: {
+    getAnswer() {
+      console.log("---", "Get answer!");
+    },
     toggleUsers: function() {
       this.showUsersText = this.shouldShowUsers
         ? 'Показать пользователей'
