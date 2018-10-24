@@ -8,6 +8,15 @@
 </head>
 <body>
   <div id="users">
+    <button type="button" v-on:click="shiftComponentName">
+      Изменить компонент
+    </button>
+    <component 
+      v-bind:is="currentComponentName"
+      title="Shifted component title"
+      v-on:get-title="getTitle"
+    ></component>
+    <br />
     <button type="button" v-on:click="toggleUsers" v-cloak>{{ showUsersText }}</button>
     <p v-if="shouldShowUsers" v-cloak>{{ usersLength }}</p>
     <table v-if="shouldShowUsers">
@@ -24,8 +33,10 @@
         <td>{{ user.photo }}</td>
       </tr>
     </table>
-    <title-component title="First title!">
-    </title-component>
+    <title-component 
+      title="First title!"
+      v-on:get-title="getTitle"
+    ></title-component>
   </div>
 </body>
 </html>

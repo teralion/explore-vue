@@ -7,7 +7,15 @@ Vue.component('title-component', {
   props: ['title'],
   template: `
     <div>
-      {{ title }}
+      <div>
+        {{ title }}
+      </div>
+      <button 
+        type="button" 
+        v-on:click="$emit('get-title', $event, title)"
+      >
+        Показать title
+      </button>
     </div>
   `,
 })
@@ -16,6 +24,8 @@ let users = new Vue({
   el: '#users',
   data: function() {
     return {
+      shiftsCounter: 1,
+      currentComponentName: '',
       shouldShowUsers: true,
       showUsersText: 'Скрыть пользователей',
       users: [
@@ -38,6 +48,17 @@ let users = new Vue({
     },
   },
   methods: {
+    shiftComponentName() {
+      console.log('---', 'this.currentComponentName:', this.currentComponentName);
+      if ( this.shiftsCounter % 2 ) this.currentComponentName = 'title-component'
+      else this.currentComponentName = ''
+
+      this.shiftsCounter++;
+      return;
+    },
+    getTitle(...props) {
+      console.log('---', 'props:', props);
+    },
     getAnswer() {
       console.log("---", "Get answer!");
     },

@@ -8,6 +8,10 @@ module.exports = {
       'vue$': 'vue/dist/vue.esm.js',
     },
   },
+  watch: true,
+  watchOptions: {
+    aggregateTimeout: 500,
+  },
   entry: './app/index.js',
   output: {
     path: path.resolve(__dirname, 'app', 'build'),

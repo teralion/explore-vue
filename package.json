@@ -2,7 +2,7 @@
   "name": "learn-vue",
   "version": "1.0.0",
   "scripts": {
-    "build": "webpack && npm start",
+    "build": "webpack",
     "start": "node ./server/index.js"
   },
   "private": true,
