@@ -1,5 +1,5 @@
 const path = require('path');
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
   mode: 'development',
@@ -12,13 +12,19 @@ module.exports = {
   watchOptions: {
     aggregateTimeout: 500,
   },
-  entry: './app/index.js',
+  entry: [
+    './app/components/index.js'
+  ],
   output: {
     path: path.resolve(__dirname, 'app', 'build'),
     filename: 'index.js',
   },
   module: {
     rules: [
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader'
+      },
       {
         test: /\.js$/,
         exclude: /node_modules/,
@@ -36,10 +42,6 @@ module.exports = {
             }
           }
         ],
-      },
-      {
-        test: /\.vue$/,
-        loader: 'vue-loader'
       },
       {
         test: /\.css$/,

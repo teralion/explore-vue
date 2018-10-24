@@ -3,22 +3,7 @@ import { VTooltip } from 'v-tooltip'
 import Copy from 'v-copy'
 import _ from 'lodash'
 
-let titleComponent = {
-  props: ['title'],
-  template: `
-    <div>
-      <div>
-        {{ title }}
-      </div>
-      <button 
-        type="button" 
-        v-on:click="$emit('get-title', $event, title)"
-      >
-        Показать title
-      </button>
-    </div>
-  `,
-}
+import titleComponent from './title.vue'
 
 let users = new Vue({
   el: '#users',
