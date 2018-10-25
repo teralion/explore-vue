@@ -2,13 +2,18 @@ import Vue from 'vue'
 import { VTooltip } from 'v-tooltip'
 import Copy from 'v-copy'
 import _ from 'lodash'
+import asyncProducer from './asyncProducer.js'
 
-import titleComponent from './title.vue'
+import TitleComponent from './title.html.vue'
+import LoadingComponent from './loading.html.vue'
 
-let users = new Vue({
+new Vue({
   el: '#users',
   components: {
-    'title-component': titleComponent,
+    'title-component': () => ({
+      component: asyncProducer(TitleComponent),
+      loading: LoadingComponent,
+    }),
   },
   data: function() {
     return {
