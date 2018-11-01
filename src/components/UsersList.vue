@@ -4,6 +4,7 @@
       v-if="!this.total"
       class="alert alert-warning" 
     >
+      <i class="fa fa-refresh fa-spin"></i>
       Загрузка...
     </div>
     <table
@@ -25,17 +26,17 @@
       <tbody>
         <tr 
           v-for="user in users"
-          v-bind:key="user._id"
+          v-bind:key="user.id"
         >
           <td>
             <router-link
-              v-bind:to="'/edit/' + user.index"
+              v-bind:to="'/edit/' + user.id"
             >
-              # {{ user.index }}
+              # {{ user.id }}
             </router-link>
           </td>
-          <td>{{ user.name.first }}</td>
-          <td>{{ user.name.last }}</td>
+          <td>{{ user.firstName }}</td>
+          <td>{{ user.lastName }}</td>
           <td>{{ user.isActive }}</td>
           <td>{{ user.balance }}</td>
           <td>{{ user.email }}</td>
