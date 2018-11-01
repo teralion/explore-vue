@@ -53,13 +53,13 @@
           </router-link>
           <router-link
             tag="li"
-            to="/users/edit"
+            to="/add"
             active-class="active"
             class="nav-item"
             exact
           >
             <a class="nav-link" href="#">
-              Edit users
+              Add user
             </a>
           </router-link>
         </ul>
