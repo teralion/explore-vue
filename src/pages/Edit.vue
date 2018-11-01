@@ -1,6 +1,12 @@
 <template>
   <div>
     <user-form />
+    <router-link 
+      v-bind:to="'/edit/' + ( this.nextUserId )"
+      tag="div"
+    >
+      <a>#{{ this.nextUserId }}</a>
+    </router-link>
   </div>
 </template>
 
@@ -15,12 +21,25 @@ export default {
   },
   data() {
     return {
-      userId: '',
+      user: {},
     }
   },
-  created() {
-    console.dir(this);
+  computed: {
+    userId() {
+      return this.$route.params.id
+    },
+    nextUserId() {
+      return Number.parseInt(this.userId) + 1
+    },
   },
+  mounted() {
+    console.log('---', 'Edit page mounted!');
+  },
+  methods: {
+    loadUser() {
+
+    }
+  }
 };
 </script>
 
