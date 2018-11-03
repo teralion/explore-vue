@@ -60,6 +60,8 @@
         v-model="localUser.company"
       >
     </div>
+
+    <slot name='buttons' />
   </div>
 
 </template>
@@ -70,7 +72,7 @@ import throttle from 'lodash/throttle'
 export default {
   name: 'UserForm',
   props: {
-    user: {
+    value: {
       type: Object,
       required: true,
     },
@@ -88,8 +90,14 @@ export default {
       }
     }
   },
+  computed: {
+    listeners() {
+      const { ...listeners } = this.$listeners;
+      return listeners;
+    }
+  },
   created() {
-    this.localUser = JSON.parse(JSON.stringify(this.user))
+    this.localUser = JSON.parse(JSON.stringify(this.value))
   },
   methods: {
     throttleInputHandler: function() {

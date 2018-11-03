@@ -9,7 +9,7 @@
     </div>
     <table
       v-else
-      class="table table-hover"
+      class="table table-striped"
     >
       <thead>
         <tr>
