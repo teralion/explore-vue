@@ -42,7 +42,7 @@
           </router-link>
           <router-link
             tag="li"
-            to="/users"
+            to="/list"
             active-class="active"
             class="nav-item"
             exact
@@ -53,19 +53,25 @@
           </router-link>
           <router-link
             tag="li"
-            to="/users/edit"
+            to="/add"
             active-class="active"
             class="nav-item"
             exact
           >
             <a class="nav-link" href="#">
-              Edit users
+              Add user
             </a>
           </router-link>
         </ul>
       </div>
     </div>
-    <router-view/>
+    <main
+      id="app"
+      role="main"
+      class="container"
+    >
+      <router-view/>
+    </main>
   </div>
 </template>
 <script>
