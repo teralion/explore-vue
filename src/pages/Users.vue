@@ -3,7 +3,7 @@
 
     <h2>Список пользователей</h2>
 
-    <item-list v-bind:items="users">
+    <item-list v-bind:items="usersToRender">
       <template slot="thead">
         <thead>
 
@@ -42,22 +42,48 @@
       </template>
     </item-list>
 
+    <rows-paginator 
+      v-bind:total="totalUsers"
+      v-bind:perPage="usersPerPage"
+      v-model="page"
+    />
   </div>
 </template>
 
 <script>
+
 import axios from 'axios'
 import ItemList from '@/components/ItemList.vue'
+import RowsPaginator from '@/components/RowsPaginator.vue'
 
 export default {
   name: 'UsersPage',
   components: {
     'item-list': ItemList,
+    'rows-paginator': RowsPaginator,
   },
   data: function() {
     return {
       users: [],
+      usersPerPage: 5, // Initial value for development
+      page: 1, // Initial value for development
     }
+  },
+  computed: {
+    totalUsers() {
+      return this.users.length;
+    },
+    usersToRender() {
+      return this.users.slice(
+        (this.page - 1) * this.usersPerPage,
+        this.page * this.usersPerPage
+      )
+    },
+  },
+  watch: {
+    page(nextVal, prevVal) {
+      console.log('---', 'on page change, nextVal: ', nextVal);
+    },
   },
   created() {
     this.loadUsers();
@@ -76,6 +102,7 @@ export default {
     },
   },
 };
+
 </script>
 
 <styles></styles>
