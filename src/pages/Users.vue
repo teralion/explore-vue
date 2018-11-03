@@ -1,20 +1,58 @@
 <template>
   <div>
+
     <h2>Список пользователей</h2>
-    <users-list 
-      v-bind:users="users"
-    />
+
+    <item-list v-bind:items="users">
+      <template slot="thead">
+        <thead>
+
+          <tr>
+            <th>#</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Активен</th>
+            <th>Баланс</th>
+            <th>Email</th>
+            <th>Телефон</th>
+            <th>Зарегистрирован</th>
+          </tr>
+
+        </thead>
+      </template>
+
+      <template 
+        slot="trCells" 
+        slot-scope="{ item }"
+      >
+        <td>
+          <router-link
+            v-bind:to="'/edit/' + item.id"
+          >
+            # {{ item.id }}
+          </router-link>
+        </td>
+        <td>{{ item.firstName }}</td>
+        <td>{{ item.lastName }}</td>
+        <td>{{ item.isActive }}</td>
+        <td>{{ item.balance }}</td>
+        <td>{{ item.email }}</td>
+        <td>{{ item.phone }}</td>
+        <td>{{ item.registered }}</td>
+      </template>
+    </item-list>
+
   </div>
 </template>
 
 <script>
 import axios from 'axios'
-import UsersList from '@/components/UsersList.vue'
+import ItemList from '@/components/ItemList.vue'
 
 export default {
   name: 'UsersPage',
   components: {
-    'users-list': UsersList,
+    'item-list': ItemList,
   },
   data: function() {
     return {

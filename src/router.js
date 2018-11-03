@@ -4,6 +4,7 @@ import Home from "./views/Home.vue";
 import Users from "./pages/Users.vue";
 import Edit from "./pages/Edit.vue";
 import Add from "./pages/Add.vue";
+import Phonebook from "./pages/Phonebook.vue";
 
 Vue.use(Router);
 
@@ -25,6 +26,11 @@ export default new Router({
       path: "/edit/:id",
       name: "edit",
       component: Edit
+    },
+    {
+      path: "/phonebook",
+      name: "phonebook",
+      component: Phonebook,
     },
     {
       path: "/add",
