@@ -26,18 +26,7 @@
             exact
           >
             <a class="nav-link" href="#">
-              Home
-            </a>
-          </router-link>
-          <router-link
-            tag="li"
-            to="/about"
-            active-class="active"
-            class="nav-item"
-            exact
-          >
-            <a class="nav-link" href="#">
-              About
+              Главная
             </a>
           </router-link>
           <router-link
@@ -48,7 +37,7 @@
             exact
           >
             <a class="nav-link" href="#">
-              Users List
+              Список пользователей
             </a>
           </router-link>
           <router-link
@@ -59,7 +48,7 @@
             exact
           >
             <a class="nav-link" href="#">
-              Add user
+              Добавить пользователя
             </a>
           </router-link>
         </ul>
@@ -70,7 +59,7 @@
       role="main"
       class="container"
     >
-      <router-view/>
+      <router-view />
     </main>
   </div>
 </template>
@@ -81,11 +70,8 @@ export default {
   name: "App"
 };
 </script>
+
 <style lang="stylus">
 #app
   margin-top 60px
-  font-family 'Avenir', Helvetica, Arial, sans-serif
-  -webkit-font-smoothing antialiased
-  -moz-osx-font-smoothing grayscale
-  text-align center
 </style>

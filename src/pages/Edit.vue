@@ -1,18 +1,47 @@
 <template>
   <div>
+
     <div v-if="!loaded">
       <i class="fa fa-refresh fa-spin"></i>
       Загрузка...
     </div>
-    <user-form
-      v-else 
-      v-bind:user="user"
-      v-on:input="value => user = value"
-    />
-    <button type="button" v-on:click="save" class="btn btn-success">
-      Сохранить
-    </button>
+
+    <div
+      v-else
+      class="card"
+    >
+
+      <div class="card-header">
+        <span class="pull-right">
+          {{ user.id }}
+        </span>
+        {{ title }}
+      </div>
+
+      <div class="card-body">
+        <user-form v-model='user'>
+          <template slot='buttons'>
+
+            <button 
+              type="button" 
+              v-on:click="save" 
+              class="btn btn-success"
+            >Сохранить изменения</button>
+            &nbsp;
+            <button 
+              type="button" 
+              v-on:click="remove" 
+              class="btn btn-danger"
+            >Удалить пользователя</button>
+
+          </template>
+        </user-form>
+      </div>
+
+    </div>
+
     <pre>{{ user }}</pre>
+
   </div>
 </template>
 
@@ -29,12 +58,21 @@ export default {
     return {
       user: {},
       loaded: false,
+      restUrl: 'http://localhost:3000/users',
     }
   },
   computed: {
     id() {
       return this.$route.params.id
     },
+    url() {
+      return `${this.restUrl}/${this.id}`
+    },
+    title() {
+      return !this.user.firstName && !this.user.lastName
+        ? 'Пользователь'
+        : [this.user.firstName, this.user.lastName, this.user.phone].join(' ')
+    }
   },
   mounted() {
     this.loadUser();
@@ -48,10 +86,12 @@ export default {
   methods: {
     loadUser() {
       axios
-        .get('http://localhost:3000/users')
+        .get(this.restUrl)
         .then((payload) => {
           this.loaded = true;
-          this.user = payload.data.find((user) => user.id === parseInt(this.id));
+          this.user = payload.data.find(
+            (user) => user.id === parseInt(this.id)
+          );
         })
         .catch((err) => {
           console.log('---', 'err:', err);
@@ -59,9 +99,16 @@ export default {
     },
     save() {
       axios
-        .patch(`http://localhost:3000/users/${this.id}`, this.user)
+        .patch(this.url, this.user)
         .then((response) => {
-          this.$router.push({ path: '/list'})
+          this.$router.push({ path: '/list' })
+        })
+    },
+    remove() {
+      axios
+        .delete(this.url)
+        .then(() => {
+          this.$router.push({ path: '/list' })
         })
     }
   },
