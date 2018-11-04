@@ -40,13 +40,16 @@
         <td>{{ item.phone }}</td>
         <td>{{ item.registered }}</td>
       </template>
+
+      <template slot="paginator">
+        <rows-paginator 
+          v-bind:total="totalUsers"
+          v-bind:perPage="usersPerPage"
+          v-model.number="page"
+        />
+      </template>
     </item-list>
 
-    <rows-paginator 
-      v-bind:total="totalUsers"
-      v-bind:perPage="usersPerPage"
-      v-model="page"
-    />
   </div>
 </template>
 
@@ -65,8 +68,8 @@ export default {
   data: function() {
     return {
       users: [],
-      usersPerPage: 5, // Initial value for development
-      page: 1, // Initial value for development
+      usersPerPage: 5,
+      page: 1,
     }
   },
   computed: {
@@ -74,15 +77,13 @@ export default {
       return this.users.length;
     },
     usersToRender() {
+      let startIndex = (this.page - 1) * this.usersPerPage;
+      let endIndex = this.page * this.usersPerPage;
+
       return this.users.slice(
-        (this.page - 1) * this.usersPerPage,
-        this.page * this.usersPerPage
-      )
-    },
-  },
-  watch: {
-    page(nextVal, prevVal) {
-      console.log('---', 'on page change, nextVal: ', nextVal);
+        startIndex,
+        endIndex
+      );
     },
   },
   created() {

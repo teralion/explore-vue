@@ -14,6 +14,7 @@
       </div>
 
       <table class="table table-striped">
+
         <slot name="thead">
           <thead>
 
@@ -43,21 +44,30 @@
 
           </tr>
         </tbody>
+
       </table>
+
+      <slot name="paginator" />
     </div>
 
   </div>
 </template>
 
 <script>
+
+import RowsPaginator from '@/components/RowsPaginator.vue'
+
 export default {
   name: 'ItemList',
+  components: {
+    'rows-paginator': RowsPaginator,
+  },
   props: {
     items: {
       type: Array,
       required: true,
       default: []
-    }
+    },
   },
   computed: {
     total: function() {
@@ -65,6 +75,7 @@ export default {
     },
   }
 };
+
 </script>
 
 <style>
