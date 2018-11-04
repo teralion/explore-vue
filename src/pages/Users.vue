@@ -3,7 +3,16 @@
 
     <h2>Список пользователей</h2>
 
-    <item-list v-bind:items="usersToRender">
+    <div 
+      v-if="!loaded"
+      class="alert alert-warning"
+    >
+      Загрузка...
+    </div>
+    <item-list
+      v-else
+      v-bind:items="usersToRender"
+    >
       <template slot="thead">
         <thead>
 
@@ -67,34 +76,75 @@ export default {
   },
   data: function() {
     return {
+      loaded: false,
       users: [],
+
+      totalUsers: 0,
       usersPerPage: 5,
       page: 1,
+      visitedPages: [],
+
+      baseUrl: 'http://localhost:3000',
     }
   },
   computed: {
-    totalUsers() {
-      return this.users.length;
-    },
     usersToRender() {
       let startIndex = (this.page - 1) * this.usersPerPage;
       let endIndex = this.page * this.usersPerPage;
-
       return this.users.slice(
         startIndex,
         endIndex
       );
     },
+    query() {
+      let p = {
+        start: `_start=0`,
+        end: `_end=${this.page * this.usersPerPage}`
+      };
+
+      return `?${p.start}&${p.end}`
+    },
+    usersUrl() {
+      return `${this.baseUrl}/users/${this.query}`
+    },
+    countUrl() {
+      return `${this.baseUrl}/count`
+    }
   },
   created() {
+    this.cacheCurrentPage();
+    this.loadUsersCount();
     this.loadUsers();
   },
+  watch: {
+    page() {
+      if ( this.visitedPages.includes(this.page) ) return;
+      this.loaded = false;
+      this.cacheCurrentPage();
+      this.loadUsers();
+    },
+  },
   methods: {
+    cacheCurrentPage() {
+      if ( this.visitedPages.includes(this.page) ) return;
+      this.visitedPages.push(this.page);
+    },
+    loadUsersCount() {
+      axios
+        .get(this.countUrl)
+        .then((payload) => {
+          this.totalUsers = payload.data[0].users;
+        })
+        .catch((err) => {
+          console.log('---', 'in loadUsersCount, err: ', err);
+        })
+    },
     loadUsers() {
       axios
-        .get('http://localhost:3000/users')
+        .get(this.usersUrl)
         .then((payload) => {
-          this.users = payload.data;
+          this.users = [...payload.data];
+          if ( !this.loaded ) this.loaded = true;
         })
         .catch((err) => {
           console.log('---', 'While fetching users,' 
