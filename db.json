@@ -161,22 +161,6 @@
       "registered": "27.06.2015"
     },
     {
-      "id": 10,
-      "isActive": true,
-      "balance": "$2,087.08",
-      "picture": "http://placehold.it/128x128",
-      "age": 30,
-      "accessLevel": "guest",
-      "firstName": "Collier",
-      "lastName": "Mcfarland",
-      "company": "COMCUR",
-      "email": "collier.mcfarland@comcur.me",
-      "phone": "+7 (966) 462-3707",
-      "address": "587 Kenilworth Place, Collins, Maryland, 2616",
-      "about": "Qui eu qui non laboris aliqua est pariatur sint culpa. Incididunt aute cupidatat eu proident non voluptate eiusmod tempor fugiat. Sit aute irure occaecat adipisicing pariatur adipisicing non ipsum eu mollit. Ea incididunt pariatur officia consequat. Ullamco mollit aliquip et pariatur ipsum dolor fugiat eu consectetur voluptate enim. Consectetur ut ea anim commodo minim. Excepteur in in magna velit reprehenderit ullamco ad voluptate eiusmod labore ad nulla.",
-      "registered": "22.02.2015"
-    },
-    {
       "id": 11,
       "guid": "",
       "isActive": false,

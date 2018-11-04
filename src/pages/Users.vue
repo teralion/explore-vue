@@ -89,20 +89,30 @@ export default {
   },
   computed: {
     usersToRender() {
-      let startIndex = (this.page - 1) * this.usersPerPage;
-      let endIndex = this.page * this.usersPerPage;
-      return this.users.slice(
-        startIndex,
-        endIndex
-      );
+      let startId = (this.page - 1) * this.usersPerPage;
+      let endId = this.page * this.usersPerPage;
+
+      return this.users.reduce((acc, elem, index) => {
+        if ( ( parseInt(elem.id) >= startId ) && 
+          ( parseInt(elem.id) <= endId )
+        ) return acc.concat(elem);
+
+        // To borrow items further if there is a gap between them
+        if ( ( acc.length < this.usersPerPage ) && 
+          ( elem.id >= endId )
+        ) return acc.concat(elem);
+
+        return acc;
+      }, [])
     },
     query() {
       let p = {
-        start: `_start=0`,
-        end: `_end=${this.page * this.usersPerPage}`
+        sort: `_sort=id`,
+        order: `_order=asc`,
+        page: `_page=${this.page}`,
+        limit: `_limit=${this.usersPerPage}`,
       };
-
-      return `?${p.start}&${p.end}`
+      return `?${p.sort}&${p.order}&${p.page}&${p.limit}`
     },
     usersUrl() {
       return `${this.baseUrl}/users/${this.query}`
@@ -143,7 +153,11 @@ export default {
       axios
         .get(this.usersUrl)
         .then((payload) => {
-          this.users = [...payload.data];
+          this.users.push(...payload.data);
+          this.users.sort((elem1, elem2) => {
+            if ( parseInt(elem1.id) >= parseInt(elem2.id) ) return 1
+            return -1
+          });
           if ( !this.loaded ) this.loaded = true;
         })
         .catch((err) => {
