@@ -80,9 +80,9 @@ export default {
       users: [],
       totalUsers: 0,
       usersPerPage: [],
+      visitedPages: [],
       maxUsersOnPage: 2,
       page: 1,
-      visitedPages: [],
 
       baseUrl: 'http://localhost:3000',
     }
@@ -106,7 +106,7 @@ export default {
   },
   created() {
     this.cacheCurrentPage();
-    this.loadUsersCount();
+    this.loadUsersAmount();
     this.loadUsers();
   },
   watch: {
@@ -119,65 +119,75 @@ export default {
   },
   methods: {
     getUsersToRender() {
-      console.log('---', 'this.users: ', this.users);
-      let currentPageIndexInCash = this.visitedPages.indexOf(this.page);
-      let nextPageIndexInCash = currentPageIndexInCash + 1;
+      // this.users === [{id: 1, ...}, {id: 2, ...}, ..., {id: 5, ...}, {id: 6, ...} ]
+      // this.visitedPages === [1, 2, 4, 5, 6]
+      // this.page === 4
+      // usersOffset === 2: [5, 6]
+
       let usersOffset = this.visitedPages
-        .slice(nextPageIndexInCash)
-        .reduce((acc, elem) => {
-          let res = acc + this.usersPerPage[elem - 1];
-          return res;
-        }, 0);
-      let usersOnCurrentPage = this.usersPerPage[this.page - 1] // First page on 0 index
-      let users = this.users
+        .slice( this.visitedPages.indexOf(this.page) + 1 )
+        .reduce( (acc, elem) => (
+          acc + parseInt(this.usersPerPage[elem - 1])
+        ), 0);
+
+      return this.users
         .slice(0, this.users.length - usersOffset)
-        .slice(-usersOnCurrentPage);
-      return users;
+        .slice( -Math.abs(this.usersPerPage[this.page - 1]) )
     },
     cacheCurrentPage() {
       if ( this.visitedPages.includes(this.page) ) return;
-      this.visitedPages.push(this.page);
-      this.visitedPages.sort((page1, page2) => {
-        if ( parseInt(page1) >= parseInt(page2) ) return 1;
-        return -1;
-      });
-    },
-    sliceUsersOnPages() {
-      let pagesWithMaxUsers = Math.floor(this.totalUsers / this.maxUsersOnPage);
-      let usersOnLastPage = this.totalUsers % this.maxUsersOnPage;
 
-      for ( let i = 0; i < pagesWithMaxUsers; i++ ) {
-        // First page starts from 0 array index so far
-        this.usersPerPage.push(this.maxUsersOnPage);
-      }
-      this.usersPerPage.push(usersOnLastPage);
+      this.visitedPages = this.visitedPages
+        .concat(this.page)
+        .sort( (page1, page2) => (
+          ( parseInt(page1) >= parseInt(page2) ) ? 1 : -1
+        ) );
     },
-    loadUsersCount() {
+    countUsersPerPage() {
+      let pagesWithMaxUsers = Math.floor(
+        this.totalUsers / this.maxUsersOnPage
+      );
+
+      if ( isNaN(pagesWithMaxUsers) || 
+        !isFinite(pagesWithMaxUsers) 
+      ) {
+        console.log('---', 'pagesWithMaxUsers is not a number or Infinity!');
+        return;
+      }
+
+      this.usersPerPage = this.usersPerPage
+        .concat( 
+          `${this.maxUsersOnPage}`
+            .repeat(pagesWithMaxUsers)
+            .split('')
+        )
+        .concat( `${this.totalUsers % this.maxUsersOnPage}` )
+    },
+    loadUsersAmount() {
       axios
         .get(this.countUrl)
-        .then((payload) => {
+        .then( (payload) => {
           this.totalUsers = payload.data[0].users;
-          this.sliceUsersOnPages();
-        })
-        .catch((err) => {
-          console.log('---', 'in loadUsersCount, err: ', err);
-        })
+          this.countUsersPerPage();
+        } )
+        .catch( (err) => {
+          console.log('---', 'in loadUsersAmount, err: ', err);
+        } )
     },
     loadUsers() {
       axios
         .get(this.usersUrl)
         .then((payload) => {
           this.users.push(...payload.data);
-          this.users.sort((elem1, elem2) => {
-            if ( parseInt(elem1.id) >= parseInt(elem2.id) ) return 1
-            return -1
-          });
-          if ( !this.loaded ) this.loaded = true;
+          this.loaded = true;
+          this.users.sort( (elem1, elem2) => (
+            ( parseInt(elem1.id) >= parseInt(elem2.id) ) ? 1 : -1
+          ) );
         })
-        .catch((err) => {
+        .catch( (err) => {
           console.log('---', 'While fetching users,' 
             + ' error occured, error:', err);
-        })
+        } )
     },
   },
 };
