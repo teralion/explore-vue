@@ -22,7 +22,9 @@
         class="page-item"
         v-for="item in pages"
         v-bind:key="item"
-        v-bind:class="(page === item) ? 'active' : '' "
+        v-bind:class="( 
+          (page === item) && !isError 
+        ) ? 'active' : '' "
       >
         <a
           href="#"

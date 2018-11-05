@@ -15,35 +15,35 @@
 
       <table class="table table-striped">
 
-        <slot name="thead">
-          <thead>
+        <thead>
+          <slot name="thead">
 
             <tr>
               <th>#</th>
               <th>Имя</th>
             </tr>
 
-          </thead>
-        </slot>
+          </slot>
+        </thead>
 
         <tbody>
-          <tr 
-            v-for="item in items"
-            v-bind:key="item.id"
+        <tr 
+          v-for="item in items"
+          v-bind:key="item.id"
+        >
+
+          <slot 
+            name="trCells" 
+            v-bind:item="item"
           >
 
-            <slot 
-              name="trCells" 
-              v-bind:item="item"
-            >
+            <td>{{ item.id }}</td>
+            <td>{{ item.firstName }}</td>
 
-              <td>{{ item.id }}</td>
-              <td>{{ item.firstName }}</td>
+          </slot>
 
-            </slot>
-
-          </tr>
-        </tbody>
+        </tr>
+      </tbody>
 
       </table>
 
