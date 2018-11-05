@@ -4,7 +4,9 @@
 
       <li
         class="page-item"
-        v-bind:class="(page === 1) ? 'disabled' : ''"
+        v-bind:class="(
+          (page === 1) || isError 
+        ) ? 'disabled' : ''"
       >
         <a
           href="#"
@@ -31,7 +33,9 @@
 
       <li
         class="page-item"
-        v-bind:class="(page === pages) ? 'disabled' : ''"
+        v-bind:class="( 
+          (page === pages) || isError
+        ) ? 'disabled' : ''"
       >
         <a
           href="#"
@@ -71,10 +75,15 @@ export default {
       required: false,
       default: 1,
     },
+    isError: {
+      type: Boolean,
+      required: false,
+      default: false,
+    }
   },
   computed: {
     pages() {
-      if ( this.perPage === 0 ) return;
+      if ( this.perPage <= 0 ) return;
       return Math.ceil(this.total / this.perPage);
     }
   },

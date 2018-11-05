@@ -52,8 +52,9 @@
 
       <template slot="paginator">
         <rows-paginator 
-          v-bind:total="totalUsers"
-          v-bind:perPage="maxUsersOnPage"
+          :total="totalUsers"
+          :perPage="maxUsersOnPage"
+          :isError="error"
           v-model.number="page"
         />
       </template>
@@ -77,30 +78,53 @@ export default {
   data: function() {
     return {
       loaded: false,
+      error: false,
+
       users: [],
       totalUsers: 0,
       usersPerPage: [],
       visitedPages: [],
-      maxUsersOnPage: 2,
-      page: 1,
+      maxUsersOnPage: 5,
+      page: 2,
 
       baseUrl: 'http://localhost:3000',
+      fallback: 'fallback',
     }
   },
   computed: {
     query() {
+      if ( !this.isPositiveNumber(this.page) ||
+        !this.isPositiveNumber(this.maxUsersOnPage)
+      ) {
+        console.log('---', 'Page or maxUsersOnPage are not a positive number!');
+        return '';
+      }
+
       let p = {
         sort: `_sort=id`,
         order: `_order=asc`,
         page: `_page=${this.page}`,
         limit: `_limit=${this.maxUsersOnPage}`,
       };
+
       return `?${p.sort}&${p.order}&${p.page}&${p.limit}`
     },
     usersUrl() {
+      if ( !this.baseUrl ||
+        !this.query 
+      ) {
+        console.log('---', 'No valid baseUrl or query provided');
+        return `${this.baseUrl}/${this.fallback}`;
+      }
+
       return `${this.baseUrl}/users/${this.query}`
     },
     countUrl() {
+      if ( !this.baseUrl ) {
+        console.log('---', 'No valid baseUrl provided')
+        return `${this.baseUrl}/${this.fallback}`;
+      }
+
       return `${this.baseUrl}/count`
     }
   },
@@ -119,8 +143,8 @@ export default {
   },
   methods: {
     getUsersToRender() {
-      // this.users === [{id: 1, ...}, {id: 2, ...}, ..., {id: 5, ...}, {id: 6, ...} ]
-      // this.visitedPages === [1, 2, 4, 5, 6]
+      // this.users === [ ..., {id: 2, ...}, ..., {id: 5, ...}, {id: 6, ...} ]
+      // this.visitedPages === [2, 4, 5, 6]
       // this.page === 4
       // usersOffset === 2: [5, 6]
 
@@ -132,9 +156,14 @@ export default {
 
       return this.users
         .slice(0, this.users.length - usersOffset)
-        .slice( -Math.abs(this.usersPerPage[this.page - 1]) )
+        .slice( -Math.abs( this.usersPerPage[this.page - 1] ) )
     },
     cacheCurrentPage() {
+      if ( !this.isPositiveNumber(this.page) ) {
+        console.log('---', 'Page is not a positive number!');
+        return;
+      }
+
       if ( this.visitedPages.includes(this.page) ) return;
 
       this.visitedPages = this.visitedPages
@@ -148,18 +177,17 @@ export default {
         this.totalUsers / this.maxUsersOnPage
       );
 
-      if ( isNaN(pagesWithMaxUsers) || 
-        !isFinite(pagesWithMaxUsers) 
-      ) {
-        console.log('---', 'pagesWithMaxUsers is not a number or Infinity!');
+      if ( !this.isPositiveNumber(pagesWithMaxUsers) ) {
+        console.log('---', 'pagesWithMaxUsers is not a positive number!');
         return;
       }
 
       this.usersPerPage = this.usersPerPage
         .concat( 
-          `${this.maxUsersOnPage}`
+          `${this.maxUsersOnPage}/`
             .repeat(pagesWithMaxUsers)
-            .split('')
+            .split('/')
+            .slice(0, pagesWithMaxUsers)
         )
         .concat( `${this.totalUsers % this.maxUsersOnPage}` )
     },
@@ -177,18 +205,31 @@ export default {
     loadUsers() {
       axios
         .get(this.usersUrl)
-        .then((payload) => {
-          this.users.push(...payload.data);
+        .then( (payload) => {
+          if ( !(Object.keys(payload.data).length === 0) ) {
+            this.users.push(...payload.data);
+          } else {
+            this.error = true;
+          }
+
           this.loaded = true;
           this.users.sort( (elem1, elem2) => (
             ( parseInt(elem1.id) >= parseInt(elem2.id) ) ? 1 : -1
           ) );
-        })
+        } )
         .catch( (err) => {
           console.log('---', 'While fetching users,' 
             + ' error occured, error:', err);
         } )
     },
+    isPositiveNumber(possibleNumber) {
+      if ( isNaN(possibleNumber) ||
+        !isFinite(possibleNumber) ||
+        ( possibleNumber === null ) ||
+        ( possibleNumber <= 0 )
+      ) return false;
+      return true;
+    }
   },
 };
 
