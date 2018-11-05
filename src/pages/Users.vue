@@ -11,7 +11,7 @@
     </div>
     <item-list
       v-else
-      v-bind:items="usersToRender"
+      v-bind:items="getUsersToRender()"
     >
       <template slot="thead">
         <thead>
@@ -53,7 +53,7 @@
       <template slot="paginator">
         <rows-paginator 
           v-bind:total="totalUsers"
-          v-bind:perPage="usersPerPage"
+          v-bind:perPage="maxUsersOnPage"
           v-model.number="page"
         />
       </template>
@@ -78,9 +78,9 @@ export default {
     return {
       loaded: false,
       users: [],
-
       totalUsers: 0,
-      usersPerPage: 5,
+      usersPerPage: [],
+      maxUsersOnPage: 2,
       page: 1,
       visitedPages: [],
 
@@ -88,29 +88,12 @@ export default {
     }
   },
   computed: {
-    usersToRender() {
-      let startId = (this.page - 1) * this.usersPerPage;
-      let endId = this.page * this.usersPerPage;
-
-      return this.users.reduce((acc, elem, index) => {
-        if ( ( parseInt(elem.id) >= startId ) && 
-          ( parseInt(elem.id) <= endId )
-        ) return acc.concat(elem);
-
-        // To borrow items further if there is a gap between them
-        if ( ( acc.length < this.usersPerPage ) && 
-          ( elem.id >= endId )
-        ) return acc.concat(elem);
-
-        return acc;
-      }, [])
-    },
     query() {
       let p = {
         sort: `_sort=id`,
         order: `_order=asc`,
         page: `_page=${this.page}`,
-        limit: `_limit=${this.usersPerPage}`,
+        limit: `_limit=${this.maxUsersOnPage}`,
       };
       return `?${p.sort}&${p.order}&${p.page}&${p.limit}`
     },
@@ -135,15 +118,46 @@ export default {
     },
   },
   methods: {
+    getUsersToRender() {
+      console.log('---', 'this.users: ', this.users);
+      let currentPageIndexInCash = this.visitedPages.indexOf(this.page);
+      let nextPageIndexInCash = currentPageIndexInCash + 1;
+      let usersOffset = this.visitedPages
+        .slice(nextPageIndexInCash)
+        .reduce((acc, elem) => {
+          let res = acc + this.usersPerPage[elem - 1];
+          return res;
+        }, 0);
+      let usersOnCurrentPage = this.usersPerPage[this.page - 1] // First page on 0 index
+      let users = this.users
+        .slice(0, this.users.length - usersOffset)
+        .slice(-usersOnCurrentPage);
+      return users;
+    },
     cacheCurrentPage() {
       if ( this.visitedPages.includes(this.page) ) return;
       this.visitedPages.push(this.page);
+      this.visitedPages.sort((page1, page2) => {
+        if ( parseInt(page1) >= parseInt(page2) ) return 1;
+        return -1;
+      });
+    },
+    sliceUsersOnPages() {
+      let pagesWithMaxUsers = Math.floor(this.totalUsers / this.maxUsersOnPage);
+      let usersOnLastPage = this.totalUsers % this.maxUsersOnPage;
+
+      for ( let i = 0; i < pagesWithMaxUsers; i++ ) {
+        // First page starts from 0 array index so far
+        this.usersPerPage.push(this.maxUsersOnPage);
+      }
+      this.usersPerPage.push(usersOnLastPage);
     },
     loadUsersCount() {
       axios
         .get(this.countUrl)
         .then((payload) => {
           this.totalUsers = payload.data[0].users;
+          this.sliceUsersOnPages();
         })
         .catch((err) => {
           console.log('---', 'in loadUsersCount, err: ', err);
