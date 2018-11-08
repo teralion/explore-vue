@@ -79,7 +79,7 @@ export default {
       maxUsers: 2,
       page: 1,
 
-      baseUrl: 'http://localhost:3000',
+      baseUrl: 'http://localhost:3000/users',
     }
   },
   created() {
@@ -94,22 +94,25 @@ export default {
   methods: {
     loadUsers() {
       axios
-        .get(`${this.baseUrl}/users/`, {
+        .get(this.baseUrl, {
           params: {
             '_sort': 'id',
             '_order': 'asc',
             '_page': this.page,
             '_limit': this.maxUsers,
+          },
+          headers: {
+            'Cache-Control': 'public, max-age=10000',
           }
         })
-        .then( (payload) => {
+        .then((payload) => {
           this.totalUsers = +payload.headers['x-total-count'];
           this.users = [...payload.data];
           this.loaded = true;
-        } )
-        .catch( (err) => {
+        })
+        .catch((err) => {
           console.log('---', 'err: ', err);
-        } )
+        })
     },
   },
 };

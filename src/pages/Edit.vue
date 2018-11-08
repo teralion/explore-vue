@@ -1,3 +1,5 @@
+<!-- Страница редактирования пользователя -->
+
 <template>
   <div>
 
@@ -10,7 +12,6 @@
       v-else
       class="card"
     >
-
       <div class="card-header">
         <span class="pull-right">
           {{ user.id }}
@@ -24,20 +25,19 @@
 
             <button 
               type="button" 
-              v-on:click="save" 
+              @click="save" 
               class="btn btn-success"
             >Сохранить изменения</button>
             &nbsp;
             <button 
               type="button" 
-              v-on:click="remove" 
+              @click="remove" 
               class="btn btn-danger"
             >Удалить пользователя</button>
 
           </template>
         </user-form>
       </div>
-
     </div>
 
     <pre>{{ user }}</pre>
@@ -46,6 +46,7 @@
 </template>
 
 <script>
+
 import axios from 'axios'
 import UserForm from '@/components/UserForm.vue'
 
@@ -65,9 +66,11 @@ export default {
     id() {
       return this.$route.params.id
     },
+
     url() {
       return `${this.restUrl}/${this.id}`
     },
+
     title() {
       return !this.user.firstName && !this.user.lastName
         ? 'Пользователь'
@@ -78,10 +81,7 @@ export default {
     this.loadUser();
   },
   watch: {
-    '$route'(to, from) {
-      this.loaded = false;
-      this.loadUser();
-    },
+    '$route': 'loadUser'
   },
   methods: {
     loadUser() {
@@ -97,13 +97,21 @@ export default {
           console.log('---', 'err:', err);
         })
     },
+
     save() {
+      this.$validator.validateAll();
+      if (this.errors.any()) {
+        alert('Не все поля заполнены!');
+        return;
+      }
+
       axios
         .patch(this.url, this.user)
         .then((response) => {
           this.$router.push({ path: '/list' })
         })
     },
+
     remove() {
       axios
         .delete(this.url)
@@ -113,6 +121,7 @@ export default {
     }
   },
 };
+
 </script>
 
 <styles></styles>
